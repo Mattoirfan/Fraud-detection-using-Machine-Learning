@@ -1,0 +1,1375 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "bf3902a9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "0ebb02a9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Fraud_data=pd.read_csv(\"D:\\softwares\\Fraud.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "92082afd",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>step</th>\n",
+       "      <th>type</th>\n",
+       "      <th>amount</th>\n",
+       "      <th>nameOrig</th>\n",
+       "      <th>oldbalanceOrg</th>\n",
+       "      <th>newbalanceOrig</th>\n",
+       "      <th>nameDest</th>\n",
+       "      <th>oldbalanceDest</th>\n",
+       "      <th>newbalanceDest</th>\n",
+       "      <th>isFraud</th>\n",
+       "      <th>isFlaggedFraud</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>9839.64</td>\n",
+       "      <td>C1231006815</td>\n",
+       "      <td>170136.0</td>\n",
+       "      <td>160296.36</td>\n",
+       "      <td>M1979787155</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>1864.28</td>\n",
+       "      <td>C1666544295</td>\n",
+       "      <td>21249.0</td>\n",
+       "      <td>19384.72</td>\n",
+       "      <td>M2044282225</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>TRANSFER</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>C1305486145</td>\n",
+       "      <td>181.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>C553264065</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>C840083671</td>\n",
+       "      <td>181.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>C38997010</td>\n",
+       "      <td>21182.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>11668.14</td>\n",
+       "      <td>C2048537720</td>\n",
+       "      <td>41554.0</td>\n",
+       "      <td>29885.86</td>\n",
+       "      <td>M1230701703</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   step      type    amount     nameOrig  oldbalanceOrg  newbalanceOrig  \\\n",
+       "0     1   PAYMENT   9839.64  C1231006815       170136.0       160296.36   \n",
+       "1     1   PAYMENT   1864.28  C1666544295        21249.0        19384.72   \n",
+       "2     1  TRANSFER    181.00  C1305486145          181.0            0.00   \n",
+       "3     1  CASH_OUT    181.00   C840083671          181.0            0.00   \n",
+       "4     1   PAYMENT  11668.14  C2048537720        41554.0        29885.86   \n",
+       "\n",
+       "      nameDest  oldbalanceDest  newbalanceDest  isFraud  isFlaggedFraud  \n",
+       "0  M1979787155             0.0             0.0        0               0  \n",
+       "1  M2044282225             0.0             0.0        0               0  \n",
+       "2   C553264065             0.0             0.0        1               0  \n",
+       "3    C38997010         21182.0             0.0        1               0  \n",
+       "4  M1230701703             0.0             0.0        0               0  "
+      ]
+     },
+     "execution_count": 85,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "id": "2ddece92",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>step</th>\n",
+       "      <th>type</th>\n",
+       "      <th>amount</th>\n",
+       "      <th>nameOrig</th>\n",
+       "      <th>oldbalanceOrg</th>\n",
+       "      <th>newbalanceOrig</th>\n",
+       "      <th>nameDest</th>\n",
+       "      <th>oldbalanceDest</th>\n",
+       "      <th>newbalanceDest</th>\n",
+       "      <th>isFraud</th>\n",
+       "      <th>isFlaggedFraud</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>6362615</th>\n",
+       "      <td>743</td>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>339682.13</td>\n",
+       "      <td>C786484425</td>\n",
+       "      <td>339682.13</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>C776919290</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>339682.13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362616</th>\n",
+       "      <td>743</td>\n",
+       "      <td>TRANSFER</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>C1529008245</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>C1881841831</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362617</th>\n",
+       "      <td>743</td>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>C1162922333</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>C1365125890</td>\n",
+       "      <td>68488.84</td>\n",
+       "      <td>6379898.11</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362618</th>\n",
+       "      <td>743</td>\n",
+       "      <td>TRANSFER</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>C1685995037</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>C2080388513</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362619</th>\n",
+       "      <td>743</td>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>C1280323807</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>C873221189</td>\n",
+       "      <td>6510099.11</td>\n",
+       "      <td>7360101.63</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         step      type      amount     nameOrig  oldbalanceOrg  \\\n",
+       "6362615   743  CASH_OUT   339682.13   C786484425      339682.13   \n",
+       "6362616   743  TRANSFER  6311409.28  C1529008245     6311409.28   \n",
+       "6362617   743  CASH_OUT  6311409.28  C1162922333     6311409.28   \n",
+       "6362618   743  TRANSFER   850002.52  C1685995037      850002.52   \n",
+       "6362619   743  CASH_OUT   850002.52  C1280323807      850002.52   \n",
+       "\n",
+       "         newbalanceOrig     nameDest  oldbalanceDest  newbalanceDest  isFraud  \\\n",
+       "6362615             0.0   C776919290            0.00       339682.13        1   \n",
+       "6362616             0.0  C1881841831            0.00            0.00        1   \n",
+       "6362617             0.0  C1365125890        68488.84      6379898.11        1   \n",
+       "6362618             0.0  C2080388513            0.00            0.00        1   \n",
+       "6362619             0.0   C873221189      6510099.11      7360101.63        1   \n",
+       "\n",
+       "         isFlaggedFraud  \n",
+       "6362615               0  \n",
+       "6362616               0  \n",
+       "6362617               0  \n",
+       "6362618               0  \n",
+       "6362619               0  "
+      ]
+     },
+     "execution_count": 86,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "2bbbae15",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(6362620, 11)"
+      ]
+     },
+     "execution_count": 87,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "2376eb99",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>step</th>\n",
+       "      <th>amount</th>\n",
+       "      <th>oldbalanceOrg</th>\n",
+       "      <th>newbalanceOrig</th>\n",
+       "      <th>oldbalanceDest</th>\n",
+       "      <th>newbalanceDest</th>\n",
+       "      <th>isFraud</th>\n",
+       "      <th>isFlaggedFraud</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "      <td>6.362620e+06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>2.433972e+02</td>\n",
+       "      <td>1.798619e+05</td>\n",
+       "      <td>8.338831e+05</td>\n",
+       "      <td>8.551137e+05</td>\n",
+       "      <td>1.100702e+06</td>\n",
+       "      <td>1.224996e+06</td>\n",
+       "      <td>1.290820e-03</td>\n",
+       "      <td>2.514687e-06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1.423320e+02</td>\n",
+       "      <td>6.038582e+05</td>\n",
+       "      <td>2.888243e+06</td>\n",
+       "      <td>2.924049e+06</td>\n",
+       "      <td>3.399180e+06</td>\n",
+       "      <td>3.674129e+06</td>\n",
+       "      <td>3.590480e-02</td>\n",
+       "      <td>1.585775e-03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>1.560000e+02</td>\n",
+       "      <td>1.338957e+04</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>2.390000e+02</td>\n",
+       "      <td>7.487194e+04</td>\n",
+       "      <td>1.420800e+04</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>1.327057e+05</td>\n",
+       "      <td>2.146614e+05</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>3.350000e+02</td>\n",
+       "      <td>2.087215e+05</td>\n",
+       "      <td>1.073152e+05</td>\n",
+       "      <td>1.442584e+05</td>\n",
+       "      <td>9.430367e+05</td>\n",
+       "      <td>1.111909e+06</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>7.430000e+02</td>\n",
+       "      <td>9.244552e+07</td>\n",
+       "      <td>5.958504e+07</td>\n",
+       "      <td>4.958504e+07</td>\n",
+       "      <td>3.560159e+08</td>\n",
+       "      <td>3.561793e+08</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "               step        amount  oldbalanceOrg  newbalanceOrig  \\\n",
+       "count  6.362620e+06  6.362620e+06   6.362620e+06    6.362620e+06   \n",
+       "mean   2.433972e+02  1.798619e+05   8.338831e+05    8.551137e+05   \n",
+       "std    1.423320e+02  6.038582e+05   2.888243e+06    2.924049e+06   \n",
+       "min    1.000000e+00  0.000000e+00   0.000000e+00    0.000000e+00   \n",
+       "25%    1.560000e+02  1.338957e+04   0.000000e+00    0.000000e+00   \n",
+       "50%    2.390000e+02  7.487194e+04   1.420800e+04    0.000000e+00   \n",
+       "75%    3.350000e+02  2.087215e+05   1.073152e+05    1.442584e+05   \n",
+       "max    7.430000e+02  9.244552e+07   5.958504e+07    4.958504e+07   \n",
+       "\n",
+       "       oldbalanceDest  newbalanceDest       isFraud  isFlaggedFraud  \n",
+       "count    6.362620e+06    6.362620e+06  6.362620e+06    6.362620e+06  \n",
+       "mean     1.100702e+06    1.224996e+06  1.290820e-03    2.514687e-06  \n",
+       "std      3.399180e+06    3.674129e+06  3.590480e-02    1.585775e-03  \n",
+       "min      0.000000e+00    0.000000e+00  0.000000e+00    0.000000e+00  \n",
+       "25%      0.000000e+00    0.000000e+00  0.000000e+00    0.000000e+00  \n",
+       "50%      1.327057e+05    2.146614e+05  0.000000e+00    0.000000e+00  \n",
+       "75%      9.430367e+05    1.111909e+06  0.000000e+00    0.000000e+00  \n",
+       "max      3.560159e+08    3.561793e+08  1.000000e+00    1.000000e+00  "
+      ]
+     },
+     "execution_count": 88,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "ae6e552f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "step              0\n",
+       "type              0\n",
+       "amount            0\n",
+       "nameOrig          0\n",
+       "oldbalanceOrg     0\n",
+       "newbalanceOrig    0\n",
+       "nameDest          0\n",
+       "oldbalanceDest    0\n",
+       "newbalanceDest    0\n",
+       "isFraud           0\n",
+       "isFlaggedFraud    0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 89,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.duplicated().sum()\n",
+    "Fraud_data.drop_duplicates(inplace=True)\n",
+    "Fraud_data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 90,
+   "id": "aa2eaa38",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 'newbalanceOrig',\n",
+       "       'nameDest', 'oldbalanceDest', 'newbalanceDest', 'isFraud',\n",
+       "       'isFlaggedFraud'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 90,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "id": "cbcd5a9b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>step</th>\n",
+       "      <th>type</th>\n",
+       "      <th>amount</th>\n",
+       "      <th>oldbalanceOrg</th>\n",
+       "      <th>newbalanceOrig</th>\n",
+       "      <th>isFraud</th>\n",
+       "      <th>isFlaggedFraud</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>9839.64</td>\n",
+       "      <td>170136.0</td>\n",
+       "      <td>160296.36</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>1864.28</td>\n",
+       "      <td>21249.0</td>\n",
+       "      <td>19384.72</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>TRANSFER</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>181.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>181.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>11668.14</td>\n",
+       "      <td>41554.0</td>\n",
+       "      <td>29885.86</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   step      type    amount  oldbalanceOrg  newbalanceOrig  isFraud  \\\n",
+       "0     1   PAYMENT   9839.64       170136.0       160296.36        0   \n",
+       "1     1   PAYMENT   1864.28        21249.0        19384.72        0   \n",
+       "2     1  TRANSFER    181.00          181.0            0.00        1   \n",
+       "3     1  CASH_OUT    181.00          181.0            0.00        1   \n",
+       "4     1   PAYMENT  11668.14        41554.0        29885.86        0   \n",
+       "\n",
+       "   isFlaggedFraud  \n",
+       "0               0  \n",
+       "1               0  \n",
+       "2               0  \n",
+       "3               0  \n",
+       "4               0  "
+      ]
+     },
+     "execution_count": 91,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.drop([ 'nameOrig','nameDest', 'oldbalanceDest', 'newbalanceDest'],inplace=True,axis=1)\n",
+    "Fraud_data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "id": "a4c9138d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "Int64Index: 6362620 entries, 0 to 6362619\n",
+      "Data columns (total 7 columns):\n",
+      " #   Column          Dtype  \n",
+      "---  ------          -----  \n",
+      " 0   step            int64  \n",
+      " 1   type            object \n",
+      " 2   amount          float64\n",
+      " 3   oldbalanceOrg   float64\n",
+      " 4   newbalanceOrig  float64\n",
+      " 5   isFraud         int64  \n",
+      " 6   isFlaggedFraud  int64  \n",
+      "dtypes: float64(3), int64(3), object(1)\n",
+      "memory usage: 388.3+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "Fraud_data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "id": "d13a4017",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN'],\n",
+       "      dtype=object)"
+      ]
+     },
+     "execution_count": 93,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data['type'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "1dd23897",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    6354407\n",
+       "1       8213\n",
+       "Name: isFraud, dtype: int64"
+      ]
+     },
+     "execution_count": 94,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data['isFraud'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "id": "b5650737",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "CASH_OUT    2237500\n",
+       "PAYMENT     2151495\n",
+       "CASH_IN     1399284\n",
+       "TRANSFER     532909\n",
+       "DEBIT         41432\n",
+       "Name: type, dtype: int64"
+      ]
+     },
+     "execution_count": 95,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Transaction_type=Fraud_data.type.value_counts()\n",
+    "Transaction_type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 96,
+   "id": "9e767fbb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "labels=['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 97,
+   "id": "e4a0d2f7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "([<matplotlib.patches.Wedge at 0x2410a1a6b60>,\n",
+       "  <matplotlib.patches.Wedge at 0x2410a1a6a70>,\n",
+       "  <matplotlib.patches.Wedge at 0x2410a1a7730>,\n",
+       "  <matplotlib.patches.Wedge at 0x2410a1a7dc0>,\n",
+       "  <matplotlib.patches.Wedge at 0x241f9224490>],\n",
+       " [Text(0.49426122663384003, 0.9827033325711335, 'PAYMENT'),\n",
+       "  Text(-1.0906766219942048, -0.1429143318051433, 'TRANSFER'),\n",
+       "  Text(0.3384112332518691, -1.046650771369777, 'CASH_OUT'),\n",
+       "  Text(1.0495474656709025, -0.3293176541028222, 'DEBIT'),\n",
+       "  Text(1.0997698357971, -0.022501294869852733, 'CASH_IN')],\n",
+       " [Text(0.26959703270936725, 0.5360199995842546, '35.2%'),\n",
+       "  Text(-0.594914521087748, -0.07795327189371452, '33.8%'),\n",
+       "  Text(0.1845879454101104, -0.5709004207471511, '22.0%'),\n",
+       "  Text(0.5724804358204921, -0.17962781132881211, '8.4%'),\n",
+       "  Text(0.5998744558893272, -0.012273433565374218, '0.7%')])"
+      ]
+     },
+     "execution_count": 97,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 640x480 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "plt.pie(Transaction_type, labels =labels,autopct='%1.1f%%')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f4a1004e",
+   "metadata": {},
+   "source": [
+    "# fraud type of transactions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 98,
+   "id": "ab7706ea",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Fraud=Fraud_data.groupby('type',as_index=False)['isFraud'].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 99,
+   "id": "cf3c5afd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Fraud_type=Fraud.sort_values(['isFraud'],ascending=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 100,
+   "id": "1f443668",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>type</th>\n",
+       "      <th>isFraud</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>CASH_OUT</td>\n",
+       "      <td>4116</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>TRANSFER</td>\n",
+       "      <td>4097</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>CASH_IN</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>DEBIT</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>PAYMENT</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       type  isFraud\n",
+       "1  CASH_OUT     4116\n",
+       "4  TRANSFER     4097\n",
+       "0   CASH_IN        0\n",
+       "2     DEBIT        0\n",
+       "3   PAYMENT        0"
+      ]
+     },
+     "execution_count": 100,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "id": "009402da",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 1], dtype=int64)"
+      ]
+     },
+     "execution_count": 101,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.isFlaggedFraud.unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 102,
+   "id": "1fba7550",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    6362604\n",
+       "1         16\n",
+       "Name: isFlaggedFraud, dtype: int64"
+      ]
+     },
+     "execution_count": 102,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data[ 'isFlaggedFraud'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 103,
+   "id": "f4d3c115",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Fraud_data['type']=Fraud_data['type'].map({'PAYMENT':1, 'TRANSFER':2, 'CASH_OUT':3, 'DEBIT':4, 'CASH_IN':5})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 104,
+   "id": "628fc60e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Fraud_data['isFraud']=Fraud_data['isFraud'].map({0:'legit',1:'fraud'})"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "59a28e8d",
+   "metadata": {},
+   "source": [
+    "# i am going to apply the machine learning model i will use Logistic regression we can use different algorithms like decision tree"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 105,
+   "id": "c5ee53a3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split \n",
+    "from sklearn.linear_model import LogisticRegression \n",
+    "from sklearn import metrics \n",
+    "from sklearn.metrics import accuracy_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "id": "919c5e71",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['step', 'type', 'amount', 'oldbalanceOrg', 'newbalanceOrig', 'isFraud',\n",
+       "       'isFlaggedFraud'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 106,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Fraud_data.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 123,
+   "id": "1b24ef32",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>step</th>\n",
+       "      <th>type</th>\n",
+       "      <th>amount</th>\n",
+       "      <th>oldbalanceOrg</th>\n",
+       "      <th>newbalanceOrig</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>9839.64</td>\n",
+       "      <td>170136.00</td>\n",
+       "      <td>160296.36</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1864.28</td>\n",
+       "      <td>21249.00</td>\n",
+       "      <td>19384.72</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>181.00</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>11668.14</td>\n",
+       "      <td>41554.00</td>\n",
+       "      <td>29885.86</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362615</th>\n",
+       "      <td>743</td>\n",
+       "      <td>3</td>\n",
+       "      <td>339682.13</td>\n",
+       "      <td>339682.13</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362616</th>\n",
+       "      <td>743</td>\n",
+       "      <td>2</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362617</th>\n",
+       "      <td>743</td>\n",
+       "      <td>3</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>6311409.28</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362618</th>\n",
+       "      <td>743</td>\n",
+       "      <td>2</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6362619</th>\n",
+       "      <td>743</td>\n",
+       "      <td>3</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>850002.52</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>6362620 rows × 5 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         step  type      amount  oldbalanceOrg  newbalanceOrig\n",
+       "0           1     1     9839.64      170136.00       160296.36\n",
+       "1           1     1     1864.28       21249.00        19384.72\n",
+       "2           1     2      181.00         181.00            0.00\n",
+       "3           1     3      181.00         181.00            0.00\n",
+       "4           1     1    11668.14       41554.00        29885.86\n",
+       "...       ...   ...         ...            ...             ...\n",
+       "6362615   743     3   339682.13      339682.13            0.00\n",
+       "6362616   743     2  6311409.28     6311409.28            0.00\n",
+       "6362617   743     3  6311409.28     6311409.28            0.00\n",
+       "6362618   743     2   850002.52      850002.52            0.00\n",
+       "6362619   743     3   850002.52      850002.52            0.00\n",
+       "\n",
+       "[6362620 rows x 5 columns]"
+      ]
+     },
+     "execution_count": 123,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "x=Fraud_data[['step', 'type', 'amount', 'oldbalanceOrg', 'newbalanceOrig']]\n",
+    "x"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 124,
+   "id": "8a479dcb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0          legit\n",
+       "1          legit\n",
+       "2          fraud\n",
+       "3          fraud\n",
+       "4          legit\n",
+       "           ...  \n",
+       "6362615    fraud\n",
+       "6362616    fraud\n",
+       "6362617    fraud\n",
+       "6362618    fraud\n",
+       "6362619    fraud\n",
+       "Name: isFraud, Length: 6362620, dtype: object"
+      ]
+     },
+     "execution_count": 124,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y=Fraud_data.iloc[:,-2]\n",
+    "y"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 125,
+   "id": "3582e290",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 126,
+   "id": "bea9cc4b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model=LogisticRegression()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 127,
+   "id": "4840ad81",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>#sk-container-id-2 {color: black;background-color: white;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: \"▸\";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: \"▾\";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: \"\";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id=\"sk-container-id-2\" class=\"sk-top-container\"><div class=\"sk-text-repr-fallback\"><pre>LogisticRegression()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class=\"sk-container\" hidden><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-2\" type=\"checkbox\" checked><label for=\"sk-estimator-id-2\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">LogisticRegression</label><div class=\"sk-toggleable__content\"><pre>LogisticRegression()</pre></div></div></div></div></div>"
+      ],
+      "text/plain": [
+       "LogisticRegression()"
+      ]
+     },
+     "execution_count": 127,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model.fit(x_train,y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 128,
+   "id": "fe5a76d5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9980849084182303"
+      ]
+     },
+     "execution_count": 128,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model.score(x_test,y_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 135,
+   "id": "7d6e336f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\ProgramData\\anaconda3\\lib\\site-packages\\sklearn\\base.py:420: UserWarning: X does not have valid feature names, but LogisticRegression was fitted with feature names\n",
+      "  warnings.warn(\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "array(['legit'], dtype=object)"
+      ]
+     },
+     "execution_count": 135,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model.predict([[1,2,9839,170136,160296]])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 136,
+   "id": "a2d481c7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.998152490640648"
+      ]
+     },
+     "execution_count": 136,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model.score(x_train,y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3d643ae8",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
